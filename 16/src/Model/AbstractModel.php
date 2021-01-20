@@ -34,7 +34,7 @@ abstract class AbstractModel
         if (!isset(self::$db)) {
             try {
                 $dsn = sprintf('mysql:host=%s;dbname=%s', config::getCredentials('DBHOST:'), config::getCredentials('DBNAME:'));
-                self::$db = new PDO($dsn, config::getCredentials('DBUSER:'), config::getCredentials('DBPASSWORD:'));
+                self::$db = new PDO($dsn, 'homestead', 'secret');
                 self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (\PDOException $exception) {
                 exit ('Connection to DB failed');
