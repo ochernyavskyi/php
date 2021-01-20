@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Model\User;
 use App\Exception\ValidationException;
+use Valitron\Validator;
 
 class UserController
 {
@@ -36,17 +37,16 @@ class UserController
 
         $errors = [];
         $data = $_POST;
-        if (empty($data['email'])) {
-            $errors['email'] = 'Cannot be empty';
-        } else {
-            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-                $errors['email'] = 'Invalid format';
-            }
+
+        $v = new Validator($data);
+        $v->rule('required', ['name', 'email', 'password']);
+        $v->rule('email', 'email');
+        if (!$v->validate()) {
+            $errors['password'] = implode('', $v->errors('password'));
+            $errors['name'] = implode('', $v->errors('name'));
+            $errors['email'] = implode(', ', $v->errors('email'));
         }
 
-        if (empty($data['password'])) {
-            $errors['password'] = 'Cannot be empty';
-        }
 
         if ($errors) {
             throw new ValidationException($errors);

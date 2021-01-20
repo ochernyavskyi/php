@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Exception\ValidationException;
 use App\Model\Ads;
 use App\Model\User;
+use Valitron\Validator;
 
 class AdsController
 {
@@ -39,12 +40,11 @@ class AdsController
 
         $errors = [];
         $data = $_POST;
-        if (empty($data['title'])) {
-            $errors['title'] = 'Cannot be empty';
-        }
-
-        if (empty($data['body'])) {
-            $errors['body'] = 'Cannot be empty';
+        $v = new Validator($data);
+        $v->rule('required', ['title', 'body']);
+        if (!$v->validate()) {
+            $errors['title'] = implode('', $v->errors('title'));;
+            $errors['body'] = implode('', $v->errors('body'));;
         }
 
         if ($errors) {
